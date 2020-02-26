@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hismart.document.modules.system.mapper.SinkUserMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hismart.document.modules.system.entity.SinkUser">
+        <id column="USER_ID" property="userId"/>
+        <result column="USERNAME" property="username"/>
+        <result column="PASSWORD" property="password"/>
+        <result column="name" property="name"/>
+        <result column="EMAIL" property="email"/>
+        <result column="MOBILE" property="mobile"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="MODIFY_TIME" property="modifyTime"/>
+        <result column="LAST_LOGIN_TIME" property="lastLoginTime"/>
+        <result column="SSEX" property="ssex"/>
+        <result column="DESCRIPTION" property="description"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        USER_ID, USERNAME,name, PASSWORD, EMAIL, MOBILE, STATUS, CREATE_TIME, MODIFY_TIME, LAST_LOGIN_TIME, SSEX, DESCRIPTION
+    </sql>
+
+    <select id="getSinkUserSqlPageList" parameterType="com.hismart.document.modules.system.entity.SinkUser"
+            resultMap="BaseResultMap">
+        select  * from sink_user
+    </select>
+
+
+    <select id="findUserDetail" resultType="com.hismart.document.modules.system.entity.SinkUser"
+            parameterType="com.hismart.document.modules.system.entity.SinkUser">
+        SELECT
+        u.user_id userId,
+        u.username,
+        u.password,
+        u.email,
+        u.name,
+        u.mobile,
+        u.STATUS,
+        u.create_time createTime,
+        u.ssex,
+        u.DESCRIPTION,
+        u.LAST_LOGIN_TIME lastLoginTime,
+        GROUP_CONCAT(r.role_id) roleId,
+        GROUP_CONCAT(r.ROLE_NAME) roleName
+        FROM
+        sink_user u
+        LEFT JOIN sink_user_role ur ON (u.user_id = ur.user_id)
+        LEFT JOIN sink_role r ON r.role_id = ur.role_id
+        WHERE 1 = 1
+        <if test="user.username != null and user.username != ''">
+            AND u.username = #{user.username}
+        </if>
+        <if test="user.createTimeFrom != null and user.createTimeFrom !=''">
+            And u.create_time &gt; #{user.createTimeFrom}
+        </if>
+        <if test="user.createTimeTo!= null and user.createTimeTo !=''">
+            And u.create_time &lt; #{user.createTimeTo}
+        </if>
+        <if test="user.ssex != null and user.ssex != ''">
+            AND u.ssex = #{user.ssex}
+        </if>
+        <if test="user.status != null and user.status != ''">
+            AND u.status = #{user.status}
+        </if>
+        group by u.username
+    </select>
+
+    <select id="findDetail" resultType="com.hismart.document.modules.system.entity.SinkUser" parameterType="string">
+        SELECT
+        u.user_id userId,
+        u.username,
+        u.password,
+        u.email,
+        u.name,
+        u.mobile,
+        u. STATUS,
+        u.create_time createTime,
+        u.ssex,
+        u.DESCRIPTION,
+        u.LAST_LOGIN_TIME lastLoginTime,
+        GROUP_CONCAT(r.role_id) roleId,
+        GROUP_CONCAT(r.ROLE_NAME) roleName
+        FROM
+        sink_user u
+
+        LEFT JOIN sink_user_role ur ON (u.user_id = ur.user_id)
+        LEFT JOIN sink_role r ON r.role_id = ur.role_id
+        WHERE  u.username = #{username}
+        group by u.username,
+            u.user_id,
+            u.password,
+            u.email,
+            u.mobile,
+            u.STATUS,
+            u.create_time,
+            u.ssex,
+            u.DESCRIPTION,
+            u.LAST_LOGIN_TIME
+    </select>
+
+
+</mapper>

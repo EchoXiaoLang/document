@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hismart.document.modules.administration.mapper.TUserMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hismart.document.modules.administration.entity.TUser">
+        <id column="phone" property="phone"/>
+        <result column="name" property="name"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="birthday" property="birthday"/>
+        <result column="campus" property="campus"/>
+        <result column="identity" property="identity"/>
+        <result column="view_number" property="viewNumber"/>
+        <result column="edit_number" property="editNumber"/>
+        <result column="remarks" property="remarks"/>
+        <result column="head_portrait" property="headPortrait"/>
+        <result column="wx_number" property="wxNumber"/>
+        <result column="wx_algorithm" property="wxAlgorithm"/>
+
+
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        phone, name, sex, age, birthday, campus, identity, view_number, edit_number, remarks,head_portrait,wx_number
+    </sql>
+
+    <select id="getTUserSqlPageList" parameterType="com.hismart.document.modules.administration.entity.TUser"
+            resultMap="BaseResultMap">
+        select * from t_user
+
+        <if test="user!=null and user.phone!=null and user.phone!=''">
+            and phone like '%${user.phone}%'
+        </if>
+
+        <if test="user!=null and user.name!=null and user.name!=''">
+            and name like '%${user.name}%'
+        </if>
+
+        <if test="user!=null and user.campus!=null and user.campus!=''">
+            and campus = '${user.campus}'
+        </if>
+
+        <if test="user!=null and user.identity!=null and user.identity!=''">
+            and identity = '${user.identity}'
+        </if>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hismart.document.modules.administration.mapper.TOrderMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hismart.document.modules.administration.entity.TOrder">
+        <result column="id" property="id"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="trade_name" property="tradeName"/>
+        <result column="price" property="price"/>
+        <result column="trade_time" property="tradeTime"/>
+        <result column="purchaser_Id" property="purchaserId"/>
+        <result column="purchaser_name" property="purchaserName"/>
+        <result column="remarks" property="remarks"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+            id,
+        order_number, trade_name, price, trade_time, purchaser_name,
+remarks
+    </sql>
+
+    <select id="getTOrderSqlPageList" parameterType="com.hismart.document.modules.administration.entity.TOrder"
+            resultMap="BaseResultMap">
+        select  * from t_order
+    </select>
+
+    <update id="updateRemarks"   parameterType="com.hismart.document.modules.administration.entity.TOrder" >
+        update  t_order set remarks=#{order.remarks}  where order_number=#{order.orderNumber}
+    </update>
+
+</mapper>

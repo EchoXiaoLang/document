@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hismart.document.modules.administration.mapper.TTaskMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hismart.document.modules.administration.entity.TTask">
+        <result column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_photo" property="taskPhoto"/>
+        <result column="upload_Id" property="uploadId"/>
+        <result column="upload_name" property="uploadName"/>
+        <result column="upload_time" property="uploadTime"/>
+        <result column="store" property="store"/>
+        <result column="teacher" property="teacher"/>
+        <result column="teacher_id" property="teacher"/>
+        <result column="remarks" property="remarks"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+            id,
+        task_id, task_name, task_photo, upload_Id, upload_name, upload_time, store, teacher, remarks
+    </sql>
+
+    <select id="getTTaskSqlPageList" parameterType="com.hismart.document.modules.administration.entity.TTask"
+            resultMap="BaseResultMap">
+        select  * from t_task
+
+
+        <if test="iTask!=null and iTask.taskId!=null and iTask.taskId!=''">
+            and  task_name like '%${iTask.taskId}%'
+        </if>
+
+        <if test="iTask!=null and iTask.taskName!=null and iTask.taskName!=''">
+            and  task_id like '%${iTask.taskName}%'
+        </if>
+
+        <if test="iTask!=null and iTask.teacher!=null and iTask.teacher!=''">
+            and  teacher like '%${iTask.teacher}%'
+        </if>
+
+        <if test="iTask!=null and iTask.store!=null and iTask.store!=''">
+            and  store = '${iTask.store}'
+        </if>
+
+        <if test="iTask!=null and iTask.startTime!=null and iTask.startTime!='' ">
+            and  upload_time &gt;=    '${iTask.startTime}'
+        </if>
+
+        <if test="iTask!=null and iTask.endTime!=null and iTask.endTime!='' ">
+            and  upload_time &gt;=    '${iTask.endTime}'
+        </if>
+
+    </select>
+
+    <update id="updateTeacherInfo" parameterType="java.lang.String">
+        update t_task   set  teacher_id='${teacherId}'  ,teacher='${teacher}' where task_id='${taskId}'
+    </update>
+
+</mapper>

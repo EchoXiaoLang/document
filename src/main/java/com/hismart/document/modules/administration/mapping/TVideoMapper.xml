@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hismart.document.modules.administration.mapper.TVideoMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hismart.document.modules.administration.entity.TVideo">
+            <result column="id" property="id" />
+                <result column="video_name" property="videoName" />
+                <result column="upload_id" property="uploadId" />
+                <result column="upload_name" property="uploadName" />
+                <result column="video_type" property="videoType" />
+                <result column="play_number" property="playNumber" />
+                <result column="purchase_number" property="purchaseNumber" />
+                <result column="upload_time" property="uploadTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+            id,
+        video_name, upload_id, upload_name, video_type, play_number, purchase_number, upload_time
+    </sql>
+
+    <select id="getTVideoSqlPageList"  parameterType="com.hismart.document.modules.administration.entity.TVideo" resultMap="BaseResultMap">
+        select  * from t_video
+
+        <if test="video!=null and video.id!=null and user.id!=''">
+            and  id like '%{user.id}'
+        </if>
+
+        <if test="video!=null and video.videoName!=null and user.videoName!=''">
+            and  video_name like '%{user.videoName}'
+        </if>
+
+        <if test="video!=null and video.videoType!=null and user.videoType!=''">
+            and  video_type like '%{user.videoType}'
+        </if>
+
+        <if test="video!=null and video.startTime!=null and video.startTime!='' ">
+            and  upload_time &gt;=    '${video.startTime}'
+        </if>
+
+        <if test="video!=null and video.endTime!=null and video.endTime!='' ">
+            and  upload_time &gt;=    '${video.endTime}'
+        </if>
+    </select>
+
+</mapper>

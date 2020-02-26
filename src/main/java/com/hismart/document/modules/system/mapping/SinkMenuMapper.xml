@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hismart.document.modules.system.mapper.SinkMenuMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hismart.document.modules.system.entity.SinkMenu">
+                <id column="MENU_ID" property="menuId" />
+                <result column="PARENT_ID" property="parentId" />
+                <result column="MENU_NAME" property="menuName" />
+                <result column="URL" property="url" />
+                <result column="PERMS" property="perms" />
+                <result column="ICON" property="icon" />
+                <result column="ORDER_NUM" property="orderNum" />
+                <result column="CREATE_TIME" property="createTime" />
+                <result column="MODIFY_TIME" property="modifyTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        MENU_ID, PARENT_ID, MENU_NAME, URL, PERMS, ICON, TYPE, ORDER_NUM, CREATE_TIME, MODIFY_TIME
+    </sql>
+
+    <select id="getSinkMenuSqlPageList" parameterType="com.hismart.document.modules.system.entity.SinkMenu" resultMap="BaseResultMap">
+        select  * from sink_menu
+    </select>
+
+    <select id="findUserIdsByMenuId" parameterType="string" resultType="string">
+        SELECT
+            user_id
+        FROM
+            sink_user_role
+        WHERE
+            role_id IN ( SELECT rm.role_id FROM sink_role_menu rm WHERE rm.menu_id = #{menuId} )
+    </select>
+
+    <!-- 递归删除菜单，findMenuChildren为自定义的 MySQL函数，作用为根据当前 menuId递归查找出其所有下级菜单或按钮-->
+    <delete id="deleteMenus" parameterType="string">
+        DELETE
+        FROM
+            sink_menu
+        WHERE
+            menu_id IN ( SELECT m.menu_id FROM ( SELECT menu_id FROM sink_menu WHERE FIND_IN_SET( menu_id, findMenuChildren ( #{menuId} ) ) > 0 ) m )
+    </delete>
+
+    <select id="findUserPermissions" resultMap="BaseResultMap">
+        select distinct m.perms
+        from sink_role r
+                 left join sink_user_role ur on (r.role_id = ur.role_id)
+                 left join sink_user u on (u.user_id = ur.user_id)
+                 left join sink_role_menu rm on (rm.role_id = r.role_id)
+                 left join sink_menu m on (m.menu_id = rm.menu_id)
+        where u.username = #{userName}
+          and m.perms is not null
+          and m.perms &lt;&gt; ''
+    </select>
+
+    <select id="findUserMenus" resultMap="BaseResultMap">
+        select m.*
+        from sink_menu m
+        where m.type &lt;&gt; 1
+          and m.MENU_ID in
+              (select distinct rm.menu_id
+               from sink_role_menu rm
+                        left join sink_role r on (rm.role_id = r.role_id)
+                        left join sink_user_role ur on (ur.role_id = r.role_id)
+                        left join sink_user u on (u.user_id = ur.user_id)
+               where u.username = #{userName})
+        order by m.order_num
+    </select>
+
+</mapper>
